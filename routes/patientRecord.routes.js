@@ -93,7 +93,10 @@ router.get(
 
 // cRud (READ) - HTTP GET
 // Buscar dados do usuário
-router.get("/patients/:id/records", async (req, res) => {
+router.get("/patients/:id/records",  
+isAuthenticated,
+attachCurrentUser,
+isDoctor, async (req, res) => {
   try {
     // Extrair o parâmetro de rota para poder filtrar o usuário no banco
 
