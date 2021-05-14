@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 
 const UserModel = require("../models/User.model");
+const PatientRecord = require("../models/PatientRecord.model");
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
@@ -109,7 +110,7 @@ router.get(
 
       // Buscar o usuário no banco pelo id
       const result = await UserModel.findOne({ _id: id }).populate({
-        path: "records",
+        path: "_id",
         model: "PatientRecord",
       });
       // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
