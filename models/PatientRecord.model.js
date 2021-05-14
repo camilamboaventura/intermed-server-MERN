@@ -1,16 +1,13 @@
 const mongoose = require("mongoose");
 
 const PatientRecordSchema = mongoose.Schema({
-  _id:{},
-  drug_allergy: { type: String, required: true},
-  food_pairing: [{ type: String, trim: true }],
-  contributed_by: String,
-  cost: { type: Number, required: true },
-  price: { type: Number, required: true },
-  qtt_in_stock: { type: Number, required: true },
-  volume: { type: Number, required: true },
-  expire_date: { type: Date, required: true },
-  transactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Transaction" }],
+  patient_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  date_of_visit: { type: Date, default: Date.now },
+  allergy: [{ type: String, required: true, trim: true }],
+  chief_complaint: { type: String, required: true, trim: true },
+  history_illness: { type: String, required: true, maxlength: 500, trim: true },
+  medications: [{ type: String, trim: true }],
+  test_results: { type: String },
 });
 
 module.exports = mongoose.model("PatientRecord", PatientRecordSchema);

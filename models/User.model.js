@@ -25,11 +25,13 @@ const UserSchema = new mongoose.Schema({
     default: "USER",
   },
   date_of_birth: { type: Date, required: true },
-  gender: { type: String, required: true},
-  user_pic: { type: String, default: "https://voxnews.com.br/wp-content/uploads/2017/04/unnamed.png" },
-  social_security_number: { type: Number, required: true }
-
-
+  gender: { type: String, required: true },
+  user_pic: {
+    type: String,
+    default: "https://voxnews.com.br/wp-content/uploads/2017/04/unnamed.png",
+  },
+  social_security_number: { type: Number, required: true },
+  records: [{ type: mongoose.Schema.Types.ObjectId, ref: "PatientRecord" }],
   // medicalConsultation: [{ type: mongoose.Schema.Types.ObjectId, ref: "MedicalConsultation" }],
 });
 
