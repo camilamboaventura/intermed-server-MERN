@@ -5,6 +5,8 @@ const UserModel = require("../models/User.model");
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
+const isAdmin = require("../middlewares/isAdmin");
+const isDoctor = require("../middlewares/isDoctor");
 
 const salt_rounds = 10;
 
@@ -121,6 +123,72 @@ router.get(
       } else {
         return res.status(404).json({ msg: "User not found." });
       }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+// crUd (UPDATE) - HTTP PUT/PATCH
+// Atualizar o usuário
+router.put(
+  "/patients/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    try {
+      // Extrair o id do paciente do parâmetro de rota
+      const { id } = req.params;
+
+      // Atualizar o paciente específico no banco
+      const result = await UserModel.findOneAndUpdate(
+        { _id: id },
+        { $set: req.body },
+        { new: true }
+      );
+
+      console.log(result);
+
+      // Caso a busca não tenha encontrado resultados, retorne 404
+      if (!result) {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+
+      // Responder com o paciente atualizado para o Admin
+      return res.status(200).json(result);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+// cruD (DELETE) - HTTP DELETE
+// Deletar um prontuário
+router.delete(
+  "/patients/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    try {
+      // Extrair o id do paciente do parâmetro de rota
+      const { id } = req.params;
+
+      // Deletar o paciente no banco
+      const result = await UserModel.deleteOne({ _id: id });
+
+      console.log(result);
+
+      // Caso a busca não tenha encontrado resultados, retorne 404
+      if (result.n === 0) {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+
+      // Por convenção, em deleções retornamos um objeto vazio para descrever sucesso
+      return res.status(200).json({});
     } catch (err) {
       console.error(err);
       return res.status(500).json({ msg: JSON.stringify(err) });

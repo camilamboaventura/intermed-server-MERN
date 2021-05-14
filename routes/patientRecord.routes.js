@@ -103,9 +103,9 @@ isDoctor, async (req, res) => {
     const { id } = req.params;
 
     // Buscar o usuário no banco pelo id
-    const result = await UserModel.findOne({ _id: id }).populate({
-      path: "records",
-      model: "PatientRecord",
+    const result = await PatientRecord.findOne({ _id: id }).populate({
+      path: "users.records",  //Campo que eu quero popular
+      model: "UserModel",
     });
 
     console.log(result);
@@ -117,70 +117,70 @@ isDoctor, async (req, res) => {
   }
 });
 
-// // crUd (UPDATE) - HTTP PUT/PATCH
-// // Atualizar um usuário
-// router.put(
-//   "/product/:id",
-//   isAuthenticated,
-//   attachCurrentUser,
-//   isAdmin,
-//   async (req, res) => {
-//     try {
-//       // Extrair o id do usuário do parâmetro de rota
-//       const { id } = req.params;
+// crUd (UPDATE) - HTTP PUT/PATCH
+// Atualizar o prontuário
+router.put(
+  "/records/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    try {
+      // Extrair o id do prontuário paciente do parâmetro de rota
+      const { id } = req.params;
 
-//       // Atualizar esse usuário específico no banco
-//       const result = await ProductModel.findOneAndUpdate(
-//         { _id: id },
-//         { $set: req.body },
-//         { new: true }
-//       );
+      // Atualizar o PRONTUÁRIO do paciente específico no banco
+      const result = await PatientRecord.findOneAndUpdate(
+        { _id: id },
+        { $set: req.body },
+        { new: true }
+      );
 
-//       console.log(result);
+      console.log(result);
 
-//       // Caso a busca não tenha encontrado resultados, retorne 404
-//       if (!result) {
-//         return res.status(404).json({ msg: "Product not found." });
-//       }
+      // Caso a busca não tenha encontrado resultados, retorne 404
+      if (!result) {
+        return res.status(404).json({ msg: "Patient Record not found." });
+      }
 
-//       // Responder com o usuário atualizado para o cliente
-//       return res.status(200).json(result);
-//     } catch (err) {
-//       console.error(err);
-//       return res.status(500).json({ msg: JSON.stringify(err) });
-//     }
-//   }
-// );
+      // Responder com o prontuário do paciente atualizado para o Admin
+      return res.status(200).json(result);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
 
-// // cruD (DELETE) - HTTP DELETE
-// // Deletar um usuário
-// router.delete(
-//   "/product/:id",
-//   isAuthenticated,
-//   attachCurrentUser,
-//   isAdmin,
-//   async (req, res) => {
-//     try {
-//       // Extrair o id do usuário do parâmetro de rota
-//       const { id } = req.params;
+// cruD (DELETE) - HTTP DELETE
+// Deletar um prontuário
+router.delete(
+  "/records/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    try {
+      // Extrair o id do prontuário do parâmetro de rota
+      const { id } = req.params;
 
-//       // Deletar o usuário no banco
-//       const result = await ProductModel.deleteOne({ _id: id });
+      // Deletar o prontuário no banco
+      const result = await PatientRecord.deleteOne({ _id: id });
 
-//       console.log(result);
+      console.log(result);
 
-//       // Caso a busca não tenha encontrado resultados, retorne 404
-//       if (result.n === 0) {
-//         return res.status(404).json({ msg: "Product not found." });
-//       }
+      // Caso a busca não tenha encontrado resultados, retorne 404
+      if (result.n === 0) {
+        return res.status(404).json({ msg: "Patient Record not found." });
+      }
 
-//       // Por convenção, em deleções retornamos um objeto vazio para descrever sucesso
-//       return res.status(200).json({});
-//     } catch (err) {
-//       console.error(err);
-//       return res.status(500).json({ msg: JSON.stringify(err) });
-//     }
-//   }
-// );
+      // Por convenção, em deleções retornamos um objeto vazio para descrever sucesso
+      return res.status(200).json({});
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
 
 module.exports = router;
