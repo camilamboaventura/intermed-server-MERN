@@ -186,33 +186,6 @@ router.get(
   }
 );
 
-//cRud (READ) - HTTP GET
-//Buscar todos os usuários
-router.get(
-  "/patients",
-  isAuthenticated,
-  attachCurrentUser,
-  isDoctor,
-  async (req, res) => {
-    try {
-      // Buscar os usuário no banco
-      const result = await UserModel.find({role: "USER"});
-
-      console.log(result);
-
-      if (result) {
-        // Responder o cliente com os dados do usuário. O status 200 significa OK
-        return res.status(200).json(result);
-      } else {
-        return res.status(404).json({ msg: "Patients not found." });
-      }
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ msg: JSON.stringify(err) });
-    }
-  }
-);
-
 // crUd (UPDATE) - HTTP PUT/PATCH
 // Atualizar o usuário
 router.put(
