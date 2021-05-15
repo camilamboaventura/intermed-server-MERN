@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 
 const UserModel = require("../models/User.model");
+const PatientRecord = require("../models/PatientRecord.model");
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
@@ -98,7 +99,62 @@ router.post("/login", async (req, res) => {
 });
 
 // cRud (READ) - HTTP GET
-// Buscar um usuário
+// Buscar todos os usuarios pacientes
+
+router.get(
+  "/patients",
+  isAuthenticated,
+  attachCurrentUser,
+  isDoctor,
+  async (req, res) => {
+    try {
+      // Buscar o usuário no banco pelo id
+      const result = await UserModel.find({role:"USER"});
+
+      console.log(result);
+
+      if (result) {
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(result);
+      } else {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+// Buscar todos os usuarios
+
+router.get(
+  "/users",
+  isAuthenticated,
+  attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    try {
+      // Buscar o usuário no banco pelo id
+      const result = await UserModel.find();
+
+      console.log(result);
+
+      if (result) {
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(result);
+      } else {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+
+// Buscar dados do usuário
 router.get(
   "/users/:id",
   isAuthenticated,
@@ -111,7 +167,7 @@ router.get(
 
       // Buscar o usuário no banco pelo id
       const result = await UserModel.findOne({ _id: id }).populate({
-        path: "records",
+        path: "_id",
         model: "PatientRecord",
       });
       // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
