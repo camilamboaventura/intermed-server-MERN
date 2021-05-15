@@ -159,6 +159,39 @@ router.get(
   "/users/:id",
   isAuthenticated,
   attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    console.log(req.headers);
+
+    try {
+      const { id } = req.params;
+
+      // Buscar o usuário no banco pelo id
+      const result = await UserModel.findOne({ _id: id }).populate({
+        path: "_id",
+        model: "PatientRecord",
+      });
+      // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
+      const loggedInUser = req.currentUser;
+
+      if (loggedInUser) {
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(result);
+      } else {
+        return res.status(404).json({ msg: "User not found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+router.get(
+  "/patients/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isDoctor,
   async (req, res) => {
     console.log(req.headers);
 
@@ -189,7 +222,7 @@ router.get(
 // crUd (UPDATE) - HTTP PUT/PATCH
 // Atualizar o usuário
 router.put(
-  "/patients/:id",
+  "/users/:id",
   isAuthenticated,
   attachCurrentUser,
   isAdmin,
