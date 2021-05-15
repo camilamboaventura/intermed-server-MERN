@@ -104,7 +104,7 @@ isDoctor, async (req, res) => {
 
     // Buscar o usuário no banco pelo id
     const result = await PatientRecord.findOne({ _id: id }).populate({
-      path: "records",
+      path: "users.records",  //Campo que eu quero popular
       model: "UserModel",
     });
 
@@ -118,7 +118,7 @@ isDoctor, async (req, res) => {
 });
 
 // crUd (UPDATE) - HTTP PUT/PATCH
-// Atualizar um usuário
+// Atualizar o prontuário
 router.put(
   "/records/:id",
   isAuthenticated,
@@ -126,12 +126,12 @@ router.put(
   isAdmin,
   async (req, res) => {
     try {
-      // Extrair o id do usuário do parâmetro de rota
+      // Extrair o id do prontuário paciente do parâmetro de rota
       const { id } = req.params;
 
-      // Atualizar esse usuário específico no banco
+      // Atualizar o PRONTUÁRIO do paciente específico no banco
       const result = await PatientRecord.findOneAndUpdate(
-        { _id: id }, //id do prontuario
+        { _id: id },
         { $set: req.body },
         { new: true }
       );
@@ -143,7 +143,7 @@ router.put(
         return res.status(404).json({ msg: "Patient Record not found." });
       }
 
-      // Responder com o usuário atualizado para o cliente
+      // Responder com o prontuário do paciente atualizado para o Admin
       return res.status(200).json(result);
     } catch (err) {
       console.error(err);
@@ -153,7 +153,7 @@ router.put(
 );
 
 // cruD (DELETE) - HTTP DELETE
-// Deletar um prontuario
+// Deletar um prontuário
 router.delete(
   "/records/:id",
   isAuthenticated,
@@ -161,10 +161,10 @@ router.delete(
   isAdmin,
   async (req, res) => {
     try {
-      // Extrair o id do usuário do parâmetro de rota
+      // Extrair o id do prontuário do parâmetro de rota
       const { id } = req.params;
 
-      // Deletar o usuário no banco
+      // Deletar o prontuário no banco
       const result = await PatientRecord.deleteOne({ _id: id });
 
       console.log(result);

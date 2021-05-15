@@ -6,6 +6,8 @@ const PatientRecord = require("../models/PatientRecord.model");
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
+const isAdmin = require("../middlewares/isAdmin");
+const isDoctor = require("../middlewares/isDoctor");
 
 const salt_rounds = 10;
 
@@ -97,6 +99,61 @@ router.post("/login", async (req, res) => {
 });
 
 // cRud (READ) - HTTP GET
+// Buscar todos os usuarios
+
+router.get(
+  "/patients",
+  isAuthenticated,
+  attachCurrentUser,
+  isDoctor,
+  async (req, res) => {
+    try {
+      // Buscar o usuário no banco pelo id
+      const result = await UserModel.find({role:"USER"});
+
+      console.log(result);
+
+      if (result) {
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(result);
+      } else {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+// Buscar todos os usuarios
+
+router.get(
+  "/users",
+  isAuthenticated,
+  attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    try {
+      // Buscar o usuário no banco pelo id
+      const result = await UserModel.find();
+
+      console.log(result);
+
+      if (result) {
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(result);
+      } else {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+
 // Buscar dados do usuário
 router.get(
   "/users/:id",
@@ -122,6 +179,72 @@ router.get(
       } else {
         return res.status(404).json({ msg: "User not found." });
       }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+// crUd (UPDATE) - HTTP PUT/PATCH
+// Atualizar o usuário
+router.put(
+  "/patients/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    try {
+      // Extrair o id do paciente do parâmetro de rota
+      const { id } = req.params;
+
+      // Atualizar o paciente específico no banco
+      const result = await UserModel.findOneAndUpdate(
+        { _id: id },
+        { $set: req.body },
+        { new: true }
+      );
+
+      console.log(result);
+
+      // Caso a busca não tenha encontrado resultados, retorne 404
+      if (!result) {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+
+      // Responder com o paciente atualizado para o Admin
+      return res.status(200).json(result);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
+// cruD (DELETE) - HTTP DELETE
+// Deletar um prontuário
+router.delete(
+  "/patients/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isAdmin,
+  async (req, res) => {
+    try {
+      // Extrair o id do paciente do parâmetro de rota
+      const { id } = req.params;
+
+      // Deletar o paciente no banco
+      const result = await UserModel.deleteOne({ _id: id });
+
+      console.log(result);
+
+      // Caso a busca não tenha encontrado resultados, retorne 404
+      if (result.n === 0) {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+
+      // Por convenção, em deleções retornamos um objeto vazio para descrever sucesso
+      return res.status(200).json({});
     } catch (err) {
       console.error(err);
       return res.status(500).json({ msg: JSON.stringify(err) });
