@@ -8,8 +8,26 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const isAdmin = require("../middlewares/isAdmin");
 const isDoctor = require("../middlewares/isDoctor");
+const uploadCloud = require("../config/cloudinary.config");
 
 const salt_rounds = 10;
+
+// Upload de Imagem no Cloudinary
+router.post(
+  "/image-upload",
+  isAuthenticated,
+  attachCurrentUser,
+  uploadCloud.single("image"),
+  (req, res) => {
+    if (!req.file) {
+      return res.status(500).json({ msg: "No file uploaded" });
+    }
+
+    console.log(req.file);
+
+    return res.status(201).json({ fileUrl: req.file.path });
+  }
+);
 
 // Crud (CREATE) - HTTP POST
 // Criar um novo usuário
