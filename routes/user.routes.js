@@ -117,7 +117,7 @@ router.post("/login", async (req, res) => {
 });
 
 // cRud (READ) - HTTP GET
-// Buscar todos os usuarios
+// Buscar todos os usuarios pacientes
 
 router.get(
   "/patients",
