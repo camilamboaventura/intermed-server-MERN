@@ -243,7 +243,7 @@ router.put(
       const result = await UserModel.findOneAndUpdate(
         { _id: id },
         { $set: req.body },
-        { new: true }
+        { new: false }
       );
 
       console.log(result);
@@ -265,7 +265,7 @@ router.put(
 // cruD (DELETE) - HTTP DELETE
 // Deletar um prontuário
 router.delete(
-  "/patients/:id",
+  "/users/:id",
   isAuthenticated,
   attachCurrentUser,
   isAdmin,
