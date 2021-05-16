@@ -109,7 +109,7 @@ router.get(
   async (req, res) => {
     try {
       // Buscar o usuário no banco pelo id
-      const result = await UserModel.find({role:"USER"});
+      const result = await UserModel.find({ role: "USER" });
 
       console.log(result);
 
@@ -153,7 +153,6 @@ router.get(
   }
 );
 
-
 // Buscar dados do usuário
 router.get(
   "/users/:id",
@@ -162,10 +161,8 @@ router.get(
   isAdmin,
   async (req, res) => {
     console.log(req.headers);
-
     try {
       const { id } = req.params;
-
       // Buscar o usuário no banco pelo id
       const result = await UserModel.findOne({ _id: id }).populate({
         path: "_id",
@@ -173,7 +170,6 @@ router.get(
       });
       // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
       const loggedInUser = req.currentUser;
-
       if (loggedInUser) {
         // Responder o cliente com os dados do usuário. O status 200 significa OK
         return res.status(200).json(result);
@@ -194,18 +190,12 @@ router.get(
   isDoctor,
   async (req, res) => {
     console.log(req.headers);
-
     try {
       const { id } = req.params;
-
       // Buscar o usuário no banco pelo id
-      const result = await UserModel.findOne({ _id: id }).populate({
-        path: "_id",
-        model: "PatientRecord",
-      });
+      const result = await UserModel.findOne({ _id: id }).populate("records");
       // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
       const loggedInUser = req.currentUser;
-
       if (loggedInUser) {
         // Responder o cliente com os dados do usuário. O status 200 significa OK
         return res.status(200).json(result);

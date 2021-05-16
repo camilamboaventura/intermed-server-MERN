@@ -28,7 +28,7 @@ const uploadCloud = require("../config/cloudinary.config");
 // Crud (CREATE) - HTTP POST
 // Criar um novo usuário
 router.post(
-  "/record",
+  "/record/:id",
   isAuthenticated,
   attachCurrentUser,
   isDoctor,
@@ -52,8 +52,15 @@ router.post(
       //   }
 
       // Salva os dados de usuário no banco de dados (MongoDB) usando o body da requisição como parâmetro
-      const result = await PatientRecord.create(req.body);
-
+      const result = await PatientRecord.create({
+        ...req.body,
+        patient_id: req.params.id,
+      });
+      const userRecord = await UserModel.findOneAndUpdate(
+        { _id: req.params.id },
+        { $push: { records: result._id } },
+        { new: true }
+      );
       // Responder o usuário recém-criado no banco para o cliente (solicitante). O status 201 significa Created
       return res.status(201).json(result);
     } catch (err) {
@@ -93,29 +100,31 @@ router.get(
 
 // cRud (READ) - HTTP GET
 // Buscar dados do usuário
-router.get("/patients/:id/records",  
-isAuthenticated,
-attachCurrentUser,
-isDoctor, async (req, res) => {
-  try {
-    // Extrair o parâmetro de rota para poder filtrar o usuário no banco
+router.get(
+  "/patients/:id/records",
+  isAuthenticated,
+  attachCurrentUser,
+  isDoctor,
+  async (req, res) => {
+    try {
+      // Extrair o parâmetro de rota para poder filtrar o usuário no banco
 
-    const { id } = req.params;
+      const { id } = req.params;
 
-    // Buscar o usuário no banco pelo id
-    const result = await PatientRecord.findOne({ _id: id }).populate({
-      path: "users.records",  //Campo que eu quero popular
-      model: "UserModel",
-    });
+      // Buscar o usuário no banco pelo id
+      const result = await PatientRecord.findOne({ _id: id }).populate(
+        "records"
+      );
 
-    console.log(result);
+      console.log(result);
 
-    return res.status(201).json(result);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ msg: JSON.stringify(err) });
+      return res.status(201).json(result);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
   }
-});
+);
 
 // crUd (UPDATE) - HTTP PUT/PATCH
 // Atualizar o prontuário
