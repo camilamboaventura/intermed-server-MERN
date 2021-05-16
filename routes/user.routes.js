@@ -212,7 +212,7 @@ router.get(
 // crUd (UPDATE) - HTTP PUT/PATCH
 // Atualizar o usuário
 router.put(
-  "/patients/:id",
+  "/users/:id",
   isAuthenticated,
   attachCurrentUser,
   isAdmin,
