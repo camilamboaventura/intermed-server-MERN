@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const PatientRecordSchema = mongoose.Schema({
+  created_by: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   patient_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   date_of_visit: { type: Date, default: Date.now },
   allergy: [{ type: String, required: true, trim: true }],

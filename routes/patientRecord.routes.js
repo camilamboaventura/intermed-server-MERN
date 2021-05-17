@@ -55,6 +55,7 @@ router.post(
       const result = await PatientRecord.create({
         ...req.body,
         patient_id: req.params.id,
+        created_by: req.currentUser._id,
       });
       const userRecord = await UserModel.findOneAndUpdate(
         { _id: req.params.id },
@@ -81,7 +82,7 @@ router.get(
   async (req, res) => {
     try {
       // Buscar o usuário no banco pelo id
-      const result = await PatientRecord.find();
+      const result = await PatientRecord.find().populate("created_by");
 
       console.log(result);
 
