@@ -227,6 +227,31 @@ router.get(
   }
 );
 
+//Busca o perfil do usuário logado.
+router.get(
+  "/profile/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      // Buscar o usuário no banco pelo id
+      const result = await UserModel.findOne({ _id: id });
+      // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
+      const loggedInUser = req.currentUser;
+      if (loggedInUser) {
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(result);
+      } else {
+        return res.status(404).json({ msg: "User not found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
 // crUd (UPDATE) - HTTP PUT/PATCH
 // Atualizar o usuário
 router.put(
@@ -238,7 +263,7 @@ router.put(
     try {
       // Extrair o id do paciente do parâmetro de rota
       const { id } = req.params;
-
+      console.log(req.body);
       // Atualizar o paciente específico no banco
       const result = await UserModel.findOneAndUpdate(
         { _id: id },
