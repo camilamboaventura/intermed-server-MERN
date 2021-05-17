@@ -9,6 +9,7 @@ const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const isAdmin = require("../middlewares/isAdmin");
 const isDoctor = require("../middlewares/isDoctor");
 const uploadCloud = require("../config/cloudinary.config");
+const PatientRecordModel = require("../models/PatientRecord.model");
 
 const salt_rounds = 10;
 
@@ -211,7 +212,10 @@ router.get(
     try {
       const { id } = req.params;
       // Buscar o usuário no banco pelo id
-      const result = await UserModel.findOne({ _id: id }).populate("records");
+      const result = await UserModel.findOne({ _id: id }).populate({
+        path: "records", model: "PatientRecord",
+        populate: { path: "created_by", model: "User" },
+      });
       // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
       const loggedInUser = req.currentUser;
       if (loggedInUser) {
