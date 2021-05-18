@@ -15,6 +15,10 @@ app.use("/", userRouter);
 const patientRecordRouter = require("./routes/patientRecord.routes");
 app.use("/", patientRecordRouter);
 
+const medicalConsultationRouter = require("./routes/medicalConsultation.routes");
+app.use("/", medicalConsultationRouter);
+
 app.listen(Number(process.env.PORT), () =>
   console.log(`Server up and running at port ${process.env.PORT}`)
 );
+

@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema({
   },
   social_security_number: { type: Number, required: true },
   records: [{ type: mongoose.Schema.Types.ObjectId, ref: "PatientRecord" }],
-  // medicalConsultation: [{ type: mongoose.Schema.Types.ObjectId, ref: "MedicalConsultation" }],
+  medicalConsultation: [{ type: mongoose.Schema.Types.ObjectId, ref: "MedicalConsultation" }],
 });
 
 const UserModel = mongoose.model("User", UserSchema);
