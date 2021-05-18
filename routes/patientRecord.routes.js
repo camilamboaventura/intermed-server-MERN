@@ -138,7 +138,10 @@ router.get(
       const { id } = req.params;
 
       // Buscar o usuário no banco pelo id
-      const result = await PatientRecord.find();
+      const result = await PatientRecord.find({ patient_id: id }).populate({
+        path: "created_by",
+        model: "User",
+      });
 
       console.log(result);
 
