@@ -16,7 +16,10 @@ router.post(
   async (req, res) => {
     try {
       // Criar a transação
-      const result = await MedicalConsultationModel.create(req.body);
+      const result = await MedicalConsultationModel.create({
+        ...req.body,
+        pacient_id: req.currentUser._id,
+      });
 
       // Atualizar as transações deste usuário
       const updatedUser = await UserModel.findOneAndUpdate(
@@ -69,71 +72,69 @@ router.post(
 //   }
 // });
 
-
-
 // crUd (UPDATE) - HTTP PUT/PATCH
 // Atualizar o prontuário
 router.put(
-    "/books/:id",
-    isAuthenticated,
-    attachCurrentUser,
-    isUser,
-    async (req, res) => {
-      try {
-        // Extrair o id do prontuário paciente do parâmetro de rota
-        const { id } = req.params;
-  
-        // Atualizar o PRONTUÁRIO do paciente específico no banco
-        const result = await MedicalConsultationModel.findOneAndUpdate(
-          { _id: id },
-          { $set: req.body },
-          { new: true }
-        );
-  
-        console.log(result);
-  
-        // Caso a busca não tenha encontrado resultados, retorne 404
-        if (!result) {
-          return res.status(404).json({ msg: "Medical Consultation not found." });
-        }
-  
-        // Responder com a consulta do paciente atualizado 
-        return res.status(200).json(result);
-      } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: JSON.stringify(err) });
+  "/books/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isUser,
+  async (req, res) => {
+    try {
+      // Extrair o id do prontuário paciente do parâmetro de rota
+      const { id } = req.params;
+
+      // Atualizar o PRONTUÁRIO do paciente específico no banco
+      const result = await MedicalConsultationModel.findOneAndUpdate(
+        { _id: id },
+        { $set: req.body },
+        { new: true }
+      );
+
+      console.log(result);
+
+      // Caso a busca não tenha encontrado resultados, retorne 404
+      if (!result) {
+        return res.status(404).json({ msg: "Medical Consultation not found." });
       }
+
+      // Responder com a consulta do paciente atualizado
+      return res.status(200).json(result);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
     }
-  );
+  }
+);
 
 // Deletar uma consulta medica
 router.delete(
-    "/books/:id",
-    isAuthenticated,
-    attachCurrentUser,
-    isUser,
-    async (req, res) => {
-      try {
-        // Extrair o id do prontuário do parâmetro de rota
-        const { id } = req.params;
-  
-        // Deletar a consulta medica no banco
-        const result = await MedicalConsultationModel.deleteOne({ _id: id });
-  
-        console.log(result);
-  
-        // Caso a busca não tenha encontrado resultados, retorne 404
-        if (result.n === 0) {
-          return res.status(404).json({ msg: "Medical Consultation not found." });
-        }
-  
-        // Por convenção, em deleções retornamos um objeto vazio para descrever sucesso
-        return res.status(200).json({});
-      } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: JSON.stringify(err) });
+  "/books/:id",
+  isAuthenticated,
+  attachCurrentUser,
+  isUser,
+  async (req, res) => {
+    try {
+      // Extrair o id do prontuário do parâmetro de rota
+      const { id } = req.params;
+
+      // Deletar a consulta medica no banco
+      const result = await MedicalConsultationModel.deleteOne({ _id: id });
+
+      console.log(result);
+
+      // Caso a busca não tenha encontrado resultados, retorne 404
+      if (result.n === 0) {
+        return res.status(404).json({ msg: "Medical Consultation not found." });
       }
+
+      // Por convenção, em deleções retornamos um objeto vazio para descrever sucesso
+      return res.status(200).json({});
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
     }
-  );
+  }
+);
 
 module.exports = router;
