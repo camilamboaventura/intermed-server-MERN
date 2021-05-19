@@ -8,6 +8,7 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const isAdmin = require("../middlewares/isAdmin");
 const isDoctor = require("../middlewares/isDoctor");
+const isUser = require("../middlewares/isUser");
 const uploadCloud = require("../config/cloudinary.config");
 const PatientRecordModel = require("../models/PatientRecord.model");
 
@@ -172,6 +173,34 @@ router.get(
   }
 );
 
+router.get(
+  "/doctors",
+  isAuthenticated,
+  attachCurrentUser,
+  isUser,
+  async (req, res) => {
+    try {
+      // Buscar o usuário no banco pelo id
+      const result = await UserModel.find(
+        { role: { $eq: "DOCTOR" } },
+        { name: 1, medical_specialty: 1 }
+      );
+
+      console.log(result);
+
+      if (result) {
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(result);
+      } else {
+        return res.status(404).json({ msg: "Patient not found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
 // Buscar dados do usuário
 router.get(
   "/users/:id",
@@ -213,7 +242,8 @@ router.get(
       const { id } = req.params;
       // Buscar o usuário no banco pelo id
       const result = await UserModel.findOne({ _id: id }).populate({
-        path: "records", model: "PatientRecord",
+        path: "records",
+        model: "PatientRecord",
         populate: { path: "created_by", model: "User" },
       });
       // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
