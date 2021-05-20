@@ -25,7 +25,7 @@ router.post(
       return res.status(500).json({ msg: "No file uploaded" });
     }
 
-    console.log(req.file);
+    console.log("oi",req.file);
 
     return res.status(201).json({ fileUrl: req.file.path });
   }
@@ -59,7 +59,7 @@ router.post("/signup", async (req, res) => {
 
     // Criptografa a senha
     const hashedPassword = await bcrypt.hash(password, salt);
-
+    console.log("oi",req.body)
     // Salva os dados de usuário no banco de dados (MongoDB) usando o body da requisição como parâmetro
     const result = await UserModel.create({
       ...req.body,
