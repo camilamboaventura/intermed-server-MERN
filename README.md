@@ -15,6 +15,9 @@ Once this is a close app to be used by hospital and Medical Institutions, is not
 - Password:Admin@123
 
 
+## Front-End Repository
+- [Check our client repository](https://github.com/ialmeidapb/intermed-client-MERN)
+
 ## Follow the Dev Team
 - Camila Boaventura   [![Linkedin Badge](https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/camilaboaventura/)](https://www.linkedin.com/in/camilaboaventura/) [![Github Badge](https://img.shields.io/github/followers/camilamboaventura?style=social&link=https://github.com/camilamboaventura/)](https://github.com/camilamboaventura)
 
