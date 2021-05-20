@@ -16,14 +16,15 @@ router.post(
   async (req, res) => {
     try {
       // Criar a transação
+      
       const result = await MedicalConsultationModel.create({
         ...req.body,
-        pacient_id: req.currentUser._id,
+        patient_id: req.currentUser._id,
       });
-
+      console.log(req.body.patient_id, result._id)
       // Atualizar as transações deste usuário
       const updatedUser = await UserModel.findOneAndUpdate(
-        { _id: req.body.pacient_id },
+        { _id: req.currentUser._id },
         { $push: { medicalConsultation: result._id } }
       );
 
