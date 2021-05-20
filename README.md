@@ -12,7 +12,7 @@
 Once this is a close app to be used by hospital and Medical Institutions, is not possible for the regular user to sign up himself, so for test purposes we recommend you to use the following user:
 
 - Email: admin@mail.com
-- Password:admin@123
+- Password:Admin@123
 
 
 ## Follow the Dev Team
