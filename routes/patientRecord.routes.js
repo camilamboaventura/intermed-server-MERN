@@ -153,30 +153,6 @@ router.get(
   }
 );
 
-// router.get(
-//   "/patient/:id/records",
-//   isAuthenticated,
-//   attachCurrentUser,
-//   async (req, res) => {
-//     try {
-//       // Extrair o parâmetro de rota para poder filtrar o usuário no banco
-
-//       const { id } = req.params;
-
-//       // Buscar o usuário no banco pelo id
-//       const result = await PatientRecord.findOne({ _id: id }).populate(
-//         "records"
-//       );
-
-//       console.log(result);
-
-//       return res.status(201).json(result);
-//     } catch (err) {
-//       console.error(err);
-//       return res.status(500).json({ msg: JSON.stringify(err) });
-//     }
-//   }
-// );
 // crUd (UPDATE) - HTTP PUT/PATCH
 // Atualizar o prontuário
 router.put(
